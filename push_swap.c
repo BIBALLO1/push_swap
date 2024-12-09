@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 10:35:38 by dmoraled          #+#    #+#             */
-/*   Updated: 2024/12/04 14:32:29 by dmoraled         ###   ########.fr       */
+/*   Updated: 2024/12/04 17:14:11 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,19 +37,16 @@ void	lst_pa(t_list **a, t_list **b)
 
 void	lst_rot(t_list **lst)
 {
-	t_list	*l;
 	t_list	*last;
+	t_list	*first;
 
 	if (!lst || !(*lst) || !(*lst)->next)
 		return ;
-	l = *lst;
-	while (l->next && l->next->next)
-	{
-		l = l->next;
-	}
-	last = l->next;
-	l->next = 0;
-	ft_lstadd_front(lst, last);
+	last = ft_lstlast(*lst);
+	first = *lst;
+	*lst = (*lst)->next;
+	first->next = 0;
+	last->next = first;
 }
 
 void	print_stack(t_list *a, t_list *b)
