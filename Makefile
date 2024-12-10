@@ -1,5 +1,6 @@
 SRC = push_swap.c\
-	  parse_input.c
+	  parse_input.c\
+	  instructions.c
 OBJ = $(SRC:.c=.o)
 
 NAME = push_swap

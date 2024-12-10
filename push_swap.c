@@ -6,48 +6,11 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 10:35:38 by dmoraled          #+#    #+#             */
-/*   Updated: 2024/12/04 17:14:11 by dmoraled         ###   ########.fr       */
+/*   Updated: 2024/12/10 09:14:06 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
-#include "libft/libft.h"
-
-void	lst_pb(t_list **a, t_list **b)
-{
-	t_list	*first;
-
-	if (!a || !b || !(*a))
-		return ;
-	first = *a;
-	*a = (*a)->next;
-	ft_lstadd_front(b, first);
-}
-
-void	lst_pa(t_list **a, t_list **b)
-{
-	t_list	*first;
-
-	if (!a || !b || !(*b))
-		return ;
-	first = *b;
-	*b = (*b)->next;
-	ft_lstadd_front(a, first);
-}
-
-void	lst_rot(t_list **lst)
-{
-	t_list	*last;
-	t_list	*first;
-
-	if (!lst || !(*lst) || !(*lst)->next)
-		return ;
-	last = ft_lstlast(*lst);
-	first = *lst;
-	*lst = (*lst)->next;
-	first->next = 0;
-	last->next = first;
-}
 
 void	print_stack(t_list *a, t_list *b)
 {
@@ -80,21 +43,25 @@ int	main(int argc, char **argv)
 	a = parse_input(argc, argv);
 	if (!a)
 		return (1);
+	print_stack(a, b);
 	while (ft_lstsize(a) > 0)
 	{
 		b_size = ft_lstsize(b);
 		while (((t_item *)a->content)->index != b_size)
 		{
-			lst_rot(&a);
+			rs(&a);
 			ft_printf("ra\n");
+			print_stack(a, b);
 		}
-		lst_pb(&a, &b);
+		pb(&a, &b);
 		ft_printf("pb\n");
+		print_stack(a, b);
 	}
 	while (ft_lstsize(b) > 0)
 	{
-		lst_pa(&a, &b);
+		pa(&a, &b);
 		ft_printf("pa\n");
+		print_stack(a, b);
 	}
 	ft_lstclear(&a, lst_item_free);
 	ft_lstclear(&b, lst_item_free);
