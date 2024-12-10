@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:24:28 by dmoraled          #+#    #+#             */
-/*   Updated: 2024/12/04 12:38:53 by dmoraled         ###   ########.fr       */
+/*   Updated: 2024/12/10 10:33:42 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,16 @@ void	lst_item_free(void *content)
 {
 	if (content)
 		free(content);
+}
+
+int	lst_item_less(void *a_content, void *b_content)
+{
+	t_item	*a;
+	t_item	*b;
+
+	a = ((t_item *)a_content);
+	b = ((t_item *)b_content);
+	return (a->index < b->index);
 }
 
 int	lst_min(t_list *lst, int threshold)

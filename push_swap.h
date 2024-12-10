@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:21:27 by dmoraled          #+#    #+#             */
-/*   Updated: 2024/12/10 09:13:41 by dmoraled         ###   ########.fr       */
+/*   Updated: 2024/12/10 10:33:48 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,12 @@ typedef struct s_item
 }	t_item;
 
 void	lst_item_free(void *content);
+int		lst_item_less(void *a_content, void *b_content);
 t_list	*parse_input(int argc, char **argv);
 
 void	pb(t_list **a, t_list **b);
 void	pa(t_list **a, t_list **b);
 void	rs(t_list **lst);
+void	rrs(t_list **lst);
 
 #endif
