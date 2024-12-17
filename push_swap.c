@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 10:35:38 by dmoraled          #+#    #+#             */
-/*   Updated: 2024/12/10 10:34:10 by dmoraled         ###   ########.fr       */
+/*   Updated: 2024/12/10 12:17:58 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,11 @@ void	print_stack(t_list *a, t_list *b)
 
 void	sort_iteration(t_list **a, t_list **b)
 {
-	int direction = 0;
-	int last_direction = 0;
+	int	direction;
+	int	last_direction;
 
+	direction = 0;
+	last_direction = 0;
 	while (ft_lstsize(*a) > 0)
 	{
 		if (direction == 0)

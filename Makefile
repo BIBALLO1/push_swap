@@ -5,7 +5,7 @@ OBJ = $(SRC:.c=.o)
 
 NAME = push_swap
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror # -fsanitize=address -g3
 
 LIB = libft/libft.a
 
