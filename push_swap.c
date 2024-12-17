@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 10:35:38 by dmoraled          #+#    #+#             */
-/*   Updated: 2024/12/10 12:17:58 by dmoraled         ###   ########.fr       */
+/*   Updated: 2024/12/17 10:39:10 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,75 +35,60 @@ void	print_stack(t_list *a, t_list *b)
 	}
 }
 
-void	sort_iteration(t_list **a, t_list **b)
+int	lst_check_radix_val(t_list *lst, int dig, int val)
 {
-	int	direction;
-	int	last_direction;
+	int	ret;
+	int	item_dig;
+	
+	ret = 1;
+	while (lst) {
+		item_dig = (((t_item *)lst->content)->index & (1 << dig)) != 0;
+		if (item_dig ^ val)
+		{
+			ret = 0;
+			break ;
+		}
+		lst = lst->next;
+	}
+	return ret;
+}
 
-	direction = 0;
-	last_direction = 0;
-	while (ft_lstsize(*a) > 0)
+void	sort_iter(t_list **a, t_list **b, int dig)
+{
+	while (a && *a) {
+		if (lst_check_radix_val(*a, dig, 1))
+			break ;
+		if (!(((t_item *)(*a)->content)->index & (1 << dig))) {
+			pb(a, b);
+		} else {
+			rs(a, 'a');
+		}
+	}
+	int b_rots = 0;
+	while (b && *b) {
+		if (lst_check_radix_val(*b, dig, 0))
+			break ;
+		if ((((t_item *)(*b)->content)->index & (1 << dig))) {
+			pa(a, b);
+		} else {
+			rs(b, 'b');
+			b_rots++;
+		}
+	}
+	while (b_rots > 0) {
+		rrs(b, 'b');
+		--b_rots;
+	}
+}
+
+int	lst_max_binary_digits(t_list *lst)
+{
+	int	max = 0;
+
+	while (lst)
 	{
-		if (direction == 0)
-		{
-			int f = ((t_item *)(*a)->content)->index;
-			int l = ((t_item *)ft_lstlast(*a)->content)->index;
-			if (((f > l && *b && ((t_item *)(*b)->content)->index < f)
-				|| (f < l && *b && ((t_item *)(*b)->content)->index < l))
-				&& last_direction == direction)
-			{
-				direction = 1;
-				ft_printf("changing to smalls\n");
-			}
-			if (direction == 0)
-			{
-				ft_printf("(dir: bigs) first: %i, last: %i\n", f, l);
-				if (f > l)
-				{
-					pb(a, b);
-					ft_printf("pb\n");
-					print_stack(*a, *b);
-				}
-				else
-				{
-					rrs(a);
-					pb(a, b);
-					ft_printf("rra\npb\n");
-					print_stack(*a, *b);
-				}
-				last_direction = 0;
-			}
-		}
-		else
-		{
-			int f = ((t_item *)(*a)->content)->index;
-			int l = ((t_item *)ft_lstlast(*a)->content)->index;
-			if (((f > l && *b && ((t_item *)(*b)->content)->index > l)
-				|| (f < l && *b && ((t_item *)(*b)->content)->index > f))
-				&& last_direction == direction)
-			{
-				direction = 0;
-				ft_printf("changing to bigs\n");
-			}
-			if (direction > 0)
-			{
-				ft_printf("(dir: smalls) first: %i, last: %i\n", f, l);
-				if (f < l)
-				{
-					pb(a, b);
-					ft_printf("pb\n");
-					print_stack(*a, *b);
-				}
-				else
-				{
-					rrs(a);
-					pb(a, b);
-					ft_printf("rra\npb\n");
-					print_stack(*a, *b);
-				}
-				last_direction = 1;
-			}
-		}
+
+		lst = lst->next;
 	}
 }
 
@@ -115,13 +100,18 @@ int	main(int argc, char **argv)
 	a = parse_input(argc, argv);
 	if (!a)
 		return (1);
-	while (!ft_lstsorted(a, lst_item_less))
-	{
-		sort_iteration(&a, &b);
-		ft_printf("--------------------------------------\n");
-		sort_iteration(&b, &a);
-		print_stack(a, b);
+	b = 0;
+	int dig = 0;
+	print_stack(a, b);
+	sort_iter(&a, &b, dig);
+	print_stack(a, b);
+	++dig;
+	sort_iter(&a, &b, dig);
+	print_stack(a, b);
+	while (b) {
+		pa(&a, &b);
 	}
+	print_stack(a, b);
 	ft_lstclear(&a, lst_item_free);
 	ft_lstclear(&b, lst_item_free);
 }

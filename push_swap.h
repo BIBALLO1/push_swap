@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:21:27 by dmoraled          #+#    #+#             */
-/*   Updated: 2024/12/10 10:33:48 by dmoraled         ###   ########.fr       */
+/*   Updated: 2024/12/17 09:48:04 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_list	*parse_input(int argc, char **argv);
 
 void	pb(t_list **a, t_list **b);
 void	pa(t_list **a, t_list **b);
-void	rs(t_list **lst);
-void	rrs(t_list **lst);
+void	rs(t_list **lst, char stack);
+void	rrs(t_list **lst, char stack);
 
 #endif
