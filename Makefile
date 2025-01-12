@@ -6,30 +6,31 @@ OBJ = $(SRC:.c=.o)
 
 NAME = push_swap
 
-CFLAGS = -Wall -Wextra -Werror # -fsanitize=address -g3
+LIBDIR = libft
+LIBNAME = ft
+LIB = $(LIBDIR)/lib$(LIBNAME).a
 
-LIB = libft/libft.a
+CFLAGS = -Wall -Wextra -Werror # -fsanitize=address -g3
 
 all: $(NAME)
 
 $(NAME): $(LIB) $(OBJ)
-	cc $(CFLAGS) $(OBJ) $(LIB) -o $@
+	cc $(CFLAGS) $(OBJ) -L$(LIBDIR) -l$(LIBNAME) -o $@
 
 $(LIB):
-	make -C libft
+	@$(MAKE) --no-print-directory -C $(LIBDIR)
 
 %.o: %.c
-	cc $(CFLAGS) -c $< -o $@
+	cc $(CFLAGS) -I$(LIBDIR) -c $< -o $@
 
 clean:
-	make -C libft clean
-	rm -f $(OBJ)
+	@$(MAKE) --no-print-directory -C libft clean
+	@rm -f $(OBJ)
 
 fclean: clean
-	make -C libft fclean
-	rm -f $(NAME)
+	@$(MAKE) --no-print-directory -C libft fclean
+	@rm -f $(NAME)
 
 re: fclean all
 
 .PHONY: all clean fclean re
-
