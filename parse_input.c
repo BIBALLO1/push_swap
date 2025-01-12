@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:24:28 by dmoraled          #+#    #+#             */
-/*   Updated: 2024/12/10 12:20:05 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/12 15:17:43 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,7 @@ int	lst_min(t_list *lst, int threshold)
 	{
 		item = (t_item *)lst->content;
 		if (item->value == min)
-		{
-			ft_putstr_fd("here\n", 2);
 			return (-2);
-		}
 		if (item->value < min && item->value > threshold)
 		{
 			min = item->value;
@@ -80,7 +77,7 @@ int	lst_fill_indices(t_list *lst)
 	return (next_min_idx != -2);
 }
 
-int	add_arg(t_list **lst, char *arg)
+int	add_arg(t_list **lst, const char *arg, const char **endptr)
 {
 	t_item	*item;
 	t_list	*new;
@@ -89,19 +86,28 @@ int	add_arg(t_list **lst, char *arg)
 	item = ft_calloc(1, sizeof(t_item));
 	new = ft_lstnew(item);
 	if (!item || !new)
-	{
-		ft_lstclear(lst, lst_item_free);
 		return (0);
-	}
+	ft_strtol(arg, endptr);
 	value = ft_atol(arg);
-	if (!ft_isnum(arg) || !ft_isint(value))
-	{
-		ft_lstclear(lst, lst_item_free);
-		ft_putstr_fd("Error\n", 2);
+	if (!ft_isint(value))
 		return (0);
-	}
 	item->value = value;
 	ft_lstadd_front(lst, new);
+	return (1);
+}
+
+int	add_args(t_list **lst, const char *arg)
+{
+	const char *nptr;
+
+	if (!ft_isnum(arg))
+		return (0);
+	nptr = arg;
+	while (ft_isnum(nptr))
+	{
+		if (!add_arg(lst, nptr, &nptr))
+			return (0);
+	}
 	return (1);
 }
 
@@ -112,8 +118,12 @@ t_list	*parse_input(int argc, char **argv)
 	lst = 0;
 	while (argc > 1)
 	{
-		if (!add_arg(&lst, argv[argc - 1]))
+		if (!add_args(&lst, argv[argc - 1]))
+		{
+			ft_lstclear(&lst, lst_item_free);
+			ft_putstr_fd("Error\n", 2);
 			return (0);
+		}
 		--argc;
 	}
 	if (!lst_fill_indices(lst))
