@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 10:35:38 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/28 13:18:28 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/28 13:45:31 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ void	sort_portion(t_list **a, t_list **b, int from, int to)
 			// ft_printf("min is closer\n");
 			if (min < 0)
 			{
-				while (min < -1)
+				while (min < -2)
 				{
 					rrs(b, 'b');
 					// print_stack(*a, *b);
@@ -170,8 +170,9 @@ void	sort_portion(t_list **a, t_list **b, int from, int to)
 			}
 			else
 			{
-				while (min > 1)
+				while (min > 2)
 				{
+					// ft_printf("min is %i steps away\n", min);
 					rs(b, 'b');
 					// print_stack(*a, *b);
 					min--;
@@ -191,133 +192,18 @@ void	sort_portion(t_list **a, t_list **b, int from, int to)
 	}
 }
 
-void	sort(t_list **a, t_list **b)
+static void	sort(t_list **a, t_list **b)
 {
-	int	med;
-	int	it;
-	int	asize;
-
-	it = 0;
-	asize = ft_lstsize(*a);
-	med = asize / 2;
-	while (it < asize)
+	int segment_size = 50;
+	int i = 0;
+	int asize = ft_lstsize(*a);
+	while (i < asize)
 	{
-		if (((t_item *)((*a)->content))->index < med)
-			pb(a, b);
-		else
-			rs(a, 'a');
-		++it;
-		// print_stack(*a, *b);
-	}
-
-	// reinsert
-	int pushed_back = 0;
-	while (ft_lstsize(*b) > 0)
-	{
-		t_list *bit = *b;
-		int maxv = 0;
-		int minv = asize;
-		while (bit)
-		{
-			int curr = ((t_item *)(bit->content))->index;
-			if (curr < minv)
-				minv = curr;
-			if (curr > maxv)
-				maxv = curr;
-			bit = bit->next;
-		}
-
-		int max = 0;
-		int min = 0;
-		bit = *b;
-		int i = 0;
-		while (bit && (max == 0 || min == 0))
-		{
-			if (((t_item *)(bit->content))->index == maxv)
-			{
-				int dst_up = i + 1; // one for the push
-				int dst_down = med - i + 1;
-				if (dst_up < dst_down)
-					max = dst_up;
-				else
-					max = -dst_down;
-				// ft_printf("max: %i\n", max);
-				// maxi = i;
-			}
-			if (((t_item *)(bit->content))->index == minv)
-			{
-				int dst_up = i + 2; // one for push, one for rot in a
-				int dst_down = med - i + 2;
-				if (dst_up < dst_down)
-					min = dst_up;
-				else
-					min = -dst_down;
-				// ft_printf("min: %i\n", min);
-				// mini = i;
-			}
-			bit = bit->next;
-			++i;
-		}
-		if (a_mag_le(max, min)) // max is closer
-		{
-			// ft_printf("max is closer\n");
-			if (max < 0)
-			{
-				while (max < -1)
-				{
-					rrs(b, 'b');
-					// print_stack(*a, *b);
-					max++;
-				}
-				pa(a, b);
-				// print_stack(*a, *b);
-			}
-			else
-			{
-				while (max > 1)
-				{
-					rs(b, 'b');
-					// print_stack(*a, *b);
-					max--;
-				}
-				pa(a, b);
-				// print_stack(*a, *b);
-			}
-		}
-		else
-		{
-			// ft_printf("min is closer\n");
-			if (min < 0)
-			{
-				while (min < -1)
-				{
-					rrs(b, 'b');
-					// print_stack(*a, *b);
-					min++;
-				}
-				pa(a, b);
-				rs(a, 'a');
-				// print_stack(*a, *b);
-			}
-			else
-			{
-				while (min > 1)
-				{
-					rs(b, 'b');
-					// print_stack(*a, *b);
-					min--;
-				}
-				pa(a, b);
-				rs(a, 'a');
-				// print_stack(*a, *b);
-			}
-			pushed_back++; // to rejoin back
-		}
-	}
-	while (pushed_back > 0)
-	{
-		rrs(a, 'a');
-		// print_stack(*a, *b);
+		int to = i + segment_size;
+		if (to > asize)
+			to = asize;
+		sort_portion(a, b, i, to);
+		i += segment_size;
 	}
 }
 
@@ -330,10 +216,9 @@ int	main(int argc, char **argv)
 	if (!a)
 		return (1);
 	b = 0;
-	// sort(&a, &b);
-	sort_portion(&a, &b, ft_lstsize(a) / 2, ft_lstsize(a));
-	sort_portion(&a, &b, 0, ft_lstsize(a) / 2);
-	print_stack(a, b);
+	sort(&a, &b);
+
+	// print_stack(a, b);
 	ft_lstclear(&a, lst_item_free);
 	ft_lstclear(&b, lst_item_free);
 }
