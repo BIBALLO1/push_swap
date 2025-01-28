@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:24:28 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/28 12:01:34 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/28 12:10:54 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int	add_arg(t_list **lst, const char *arg, const char **endptr)
 	if (!ft_isint(value))
 		return (0);
 	item->value = value;
-	ft_lstadd_front(lst, new);
+	ft_lstadd_back(lst, new);
 	return (1);
 }
 
@@ -114,17 +114,19 @@ int	add_args(t_list **lst, const char *arg)
 t_list	*parse_input(int argc, char **argv)
 {
 	t_list	*lst;
+	int		arg_it;
 
 	lst = 0;
-	while (argc > 1)
+	arg_it = 1;
+	while (arg_it < argc)
 	{
-		if (!add_args(&lst, argv[argc - 1]))
+		if (!add_args(&lst, argv[arg_it]))
 		{
 			ft_lstclear(&lst, lst_item_free);
 			ft_putstr_fd("Error\n", 2);
 			return (0);
 		}
-		--argc;
+		++arg_it;
 	}
 	if (!lst_fill_indices(lst))
 	{
