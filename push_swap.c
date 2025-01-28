@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 10:35:38 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/28 13:45:31 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/28 15:47:10 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 
 void	print_stack(t_list *a, t_list *b)
 {
+#ifndef DEB
+	(void)a;
+	(void)b;
+#endif
+#ifdef DEB
 	ft_printf("---\n");
 	while (a || b)
 	{
@@ -34,6 +39,7 @@ void	print_stack(t_list *a, t_list *b)
 		}
 		ft_printf("\n");
 	}
+#endif
 }
 
 int	lst_check_radix_val(t_list *lst, int dig, int val)
@@ -49,13 +55,13 @@ int	lst_check_radix_val(t_list *lst, int dig, int val)
 	return (1);
 }
 
-static int	a_mag_le(int a, int b)
+static int	a_mag_l(int a, int b)
 {
 	if (a < 0)
 		a = -a;
 	if (b < 0)
 		b = -b;
-	return (a <= b);
+	return (a < b);
 }
 
 void	sort_portion(t_list **a, t_list **b, int from, int to)
@@ -66,16 +72,35 @@ void	sort_portion(t_list **a, t_list **b, int from, int to)
 
 	it = 0;
 	asize = ft_lstsize(*a);
+	int skipped = 0;
 	// med = asize / 2;
-	while (it < asize)
+	int skip_mode = 0;
+	while (it < asize && skip_mode != 1)
 	{
 		int v = ((t_item *)((*a)->content))->index;
+		if (v < from) // if worth it, skip already sorted
+		{
+			if (skipped < asize / 2)
+				skip_mode = 1;
+			else
+				skip_mode = 2;
+		}
 		if (v >= from && v < to)
+		{
 			pb(a, b);
-		else
+		}
+		else 
+		{
 			rs(a, 'a');
+			++skipped;
+		}
 		++it;
 		// print_stack(*a, *b);
+	}
+	while (skipped > 0 && skip_mode == 1)
+	{
+		rrs(a, 'a');
+		--skipped;
 	}
 
 	// reinsert
@@ -117,6 +142,7 @@ void	sort_portion(t_list **a, t_list **b, int from, int to)
 			{
 				int dst_up = i + 2; // one for push, one for rot in a
 				int dst_down = bsize - i + 2;
+				// ft_printf("min is up: %i, down: %i\n", dst_up, dst_down);
 				if (dst_up < dst_down)
 					min = dst_up;
 				else
@@ -127,7 +153,7 @@ void	sort_portion(t_list **a, t_list **b, int from, int to)
 			bit = bit->next;
 			++i;
 		}
-		if (a_mag_le(max, min)) // max is closer
+		if (a_mag_l(max, min)) // max is closer
 		{
 			// ft_printf("max is closer\n");
 			if (max < 0)
@@ -152,6 +178,7 @@ void	sort_portion(t_list **a, t_list **b, int from, int to)
 				pa(a, b);
 				// print_stack(*a, *b);
 			}
+			pushed_back++; // to rejoin back
 		}
 		else
 		{
@@ -181,12 +208,12 @@ void	sort_portion(t_list **a, t_list **b, int from, int to)
 				rs(a, 'a');
 				// print_stack(*a, *b);
 			}
-			pushed_back++; // to rejoin back
 		}
 	}
 	while (pushed_back > 0)
 	{
-		rrs(a, 'a');
+		// rrs(a, 'a');
+		rs(a, 'a');
 		pushed_back--;
 		// print_stack(*a, *b);
 	}
@@ -194,14 +221,15 @@ void	sort_portion(t_list **a, t_list **b, int from, int to)
 
 static void	sort(t_list **a, t_list **b)
 {
-	int segment_size = 50;
-	int i = 0;
+	int segment_size = 80;
 	int asize = ft_lstsize(*a);
+	int i = 0;
 	while (i < asize)
 	{
 		int to = i + segment_size;
 		if (to > asize)
 			to = asize;
+		// ft_printf("sorting %i - %i\n", i, to);
 		sort_portion(a, b, i, to);
 		i += segment_size;
 	}

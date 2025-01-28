@@ -10,7 +10,7 @@ LIBDIR = libft
 LIBNAME = ft
 LIB = $(LIBDIR)/lib$(LIBNAME).a
 
-CFLAGS = -Wall -Wextra -Werror # -fsanitize=address -g3
+CFLAGS = -Wall -Wextra -Werror -DDEB # -fsanitize=address -g3
 
 all: $(NAME)
 
