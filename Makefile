@@ -1,6 +1,9 @@
 SRC = push_swap.c\
 	  parse_input.c\
+	  trivial.c\
+	  complex.c\
 	  instructions/push.c\
+	  instructions/swap.c\
 	  instructions/rotate.c
 OBJ = $(SRC:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 10:35:38 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/28 15:47:10 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/29 00:48:19 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,6 @@
 
 void	print_stack(t_list *a, t_list *b)
 {
-#ifndef DEB
-	(void)a;
-	(void)b;
-#endif
-#ifdef DEB
 	ft_printf("---\n");
 	while (a || b)
 	{
@@ -39,7 +34,6 @@ void	print_stack(t_list *a, t_list *b)
 		}
 		ft_printf("\n");
 	}
-#endif
 }
 
 int	lst_check_radix_val(t_list *lst, int dig, int val)
@@ -219,7 +213,7 @@ void	sort_portion(t_list **a, t_list **b, int from, int to)
 	}
 }
 
-static void	sort(t_list **a, t_list **b)
+void	sort(t_list **a, t_list **b)
 {
 	int segment_size = 80;
 	int asize = ft_lstsize(*a);
@@ -244,9 +238,10 @@ int	main(int argc, char **argv)
 	if (!a)
 		return (1);
 	b = 0;
-	sort(&a, &b);
+	sort_complex(&a, &b);
+	// sort(&a, &b);
 
-	// print_stack(a, b);
+	print_stack(a, b);
 	ft_lstclear(&a, lst_item_free);
 	ft_lstclear(&b, lst_item_free);
 }
