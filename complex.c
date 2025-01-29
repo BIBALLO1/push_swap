@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 00:45:23 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/29 00:48:09 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/29 11:22:45 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,29 +18,26 @@ static int	lst_at(t_list *a, int idx)
 	return (((t_item *)(ft_lstidx(a, idx)->content))->index);
 }
 
-void	sort_complex(t_list **a, t_list **b)
+static int	*get_targets(t_list *a, t_list *b)
 {
-	while (ft_lstsize(*a) > 3)
-		pb(a, b);
-	sort_trivial(a);
-
-	int bsize = ft_lstsize(*b);
+	int bsize = ft_lstsize(b);
 	int *targets = malloc(sizeof(int) * bsize);
-	int i = bsize;
-	while (i > 0)
+	int i = 0;
+	t_list *bit = b;
+	while (bit)
 	{
-		--i;
-		int iv = lst_at(*b, i);
-		t_list *ait = *a;
+		int bv = ((t_item *)(bit->content))->index;
+
+		t_list *ait = a;
 		int nearest = INT_MAX;
 		int j = 0;
 		int jmin = 0;
 		while (ait)
 		{
-			int v = ((t_item *)(ait->content))->index;
-			if (v > iv && v < nearest)
+			int av = ((t_item *)(ait->content))->index;
+			if (av > bv && av < nearest)
 			{
-				nearest = v;
+				nearest = av;
 				jmin = j;
 			}
 			ait = ait->next;
@@ -49,7 +46,7 @@ void	sort_complex(t_list **a, t_list **b)
 		if (nearest == INT_MAX)
 		{
 			j = 0;
-			ait = *a;
+			ait = a;
 			while (ait)
 			{
 				int v = ((t_item *)(ait->content))->index;
@@ -62,10 +59,26 @@ void	sort_complex(t_list **a, t_list **b)
 				++j;
 			}
 		}
+		// ((t_item *)(bit->content))->target = jmin;
 		targets[i] = jmin;
+
+		bit = bit->next;
+		++i;
 	}
+	return (targets);
+}
+
+void	sort_complex(t_list **a, t_list **b)
+{
+	while (ft_lstsize(*a) > 3)
+		pb(a, b);
+	sort_trivial(a);
+
+	int bsize = ft_lstsize(*b);
+	int *targets = get_targets(*a, *b);
 	int mincost = INT_MAX;
 	int mincosti = -1;
+	int i = 0;
 	while (i < bsize)
 	{
 		int cost;
@@ -83,7 +96,7 @@ void	sort_complex(t_list **a, t_list **b)
 	}
 	ft_printf("cheapest: %i to %i\n", lst_at(*b, mincosti), lst_at(*a, targets[mincosti]));
 	int target = targets[mincosti];
-	// free(targets);
+	free(targets);
 	if (target > ft_lstsize(*a) / 2)
 	{
 		while (target < ft_lstsize(*a))

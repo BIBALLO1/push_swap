@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:21:27 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/29 00:46:06 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/29 11:22:49 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 typedef struct s_item
 {
+	// t_list *target;
 	int	value;
 	int	index;
 }	t_item;
