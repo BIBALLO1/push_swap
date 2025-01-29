@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 16:09:18 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/29 00:47:10 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/29 13:31:21 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,18 @@ static void sort_three(t_list **a, char a_n)
 	}
 }
 
-void	sort_trivial(t_list **a)
+void	sort_trivial(t_list **a, char name)
 {
 	if (ft_lstsize(*a) < 3)
 	{
-		sort_two(a, 'a');
+		sort_two(a, name);
 		return ;
 	}
-	sort_three(a, 'a');
+	sort_three(a, name);
+}
+
+void	reverse_trivial(t_list **a, char name)
+{
+	ss(a, name);
+	rs(a, name);
 }

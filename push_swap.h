@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:21:27 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/29 11:22:49 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/29 13:58:23 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,22 @@
 
 typedef struct s_item
 {
-	// t_list *target;
+	t_list *target;
 	int	value;
 	int	index;
+	int	cost;
 }	t_item;
 
 void	lst_item_free(void *content);
 int		lst_item_less(void *a_content, void *b_content);
 t_list	*parse_input(int argc, char **argv);
 
-void	sort_trivial(t_list **a);
+void	print_stack(t_list *a, t_list *b);
+
+void	sort_trivial(t_list **a, char name);
+void	reverse_trivial(t_list **a, char name);
+
+void	sort_complex_single(t_list **a, t_list **b);
 void	sort_complex(t_list **a, t_list **b);
 
 void	pb(t_list **a, t_list **b);

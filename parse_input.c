@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:24:28 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/28 12:10:54 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/29 11:45:07 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	lst_min(t_list *lst, int threshold)
 	curr_idx = 0;
 	while (lst)
 	{
-		item = (t_item *)lst->content;
+		item = (t_item *)(lst->content);
 		if (item->value == min)
 			return (-2);
 		if (item->value < min && item->value > threshold)

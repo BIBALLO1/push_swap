@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 10:35:38 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/29 00:48:19 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/29 14:11:44 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,10 +238,13 @@ int	main(int argc, char **argv)
 	if (!a)
 		return (1);
 	b = 0;
-	sort_complex(&a, &b);
-	// sort(&a, &b);
+	if (ft_lstsize(a) <= 3)
+		sort_trivial(&a, 'a');
+	else
+		// sort_complex(&a, &b);
+		sort_complex_single(&a, &b);
 
-	print_stack(a, b);
+	// print_stack(a, b);
 	ft_lstclear(&a, lst_item_free);
 	ft_lstclear(&b, lst_item_free);
 }

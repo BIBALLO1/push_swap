@@ -6,112 +6,239 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 00:45:23 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/29 11:22:45 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/29 13:58:59 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 #include "libft/libft.h"
 
-static int	lst_at(t_list *a, int idx)
-{
-	return (((t_item *)(ft_lstidx(a, idx)->content))->index);
-}
+// static int	lst_at(t_list *a, int idx)
+// {
+// 	return (((t_item *)(ft_lstidx(a, idx)->content))->index);
+// }
 
-static int	*get_targets(t_list *a, t_list *b)
+static void	fill_targets(t_list *to, t_list *from)
 {
-	int bsize = ft_lstsize(b);
-	int *targets = malloc(sizeof(int) * bsize);
-	int i = 0;
-	t_list *bit = b;
-	while (bit)
+	t_list *fit = from;
+	while (fit)
 	{
-		int bv = ((t_item *)(bit->content))->index;
+		int fv = ((t_item *)(fit->content))->index;
 
-		t_list *ait = a;
-		int nearest = INT_MAX;
-		int j = 0;
-		int jmin = 0;
-		while (ait)
+		t_list *toit = to;
+		t_list *target = 0;
+		while (toit)
 		{
-			int av = ((t_item *)(ait->content))->index;
-			if (av > bv && av < nearest)
+			int tov = ((t_item *)(toit->content))->index;
+			if (tov > fv)
 			{
-				nearest = av;
-				jmin = j;
+				if (!target || 
+					((t_item *)(target->content))->index > tov)
+					target = toit;
 			}
-			ait = ait->next;
-			++j;
+			toit = toit->next;
 		}
-		if (nearest == INT_MAX)
+		if (!target)
 		{
-			j = 0;
-			ait = a;
-			while (ait)
+			toit = to;
+			while (toit)
 			{
-				int v = ((t_item *)(ait->content))->index;
-				if (v < nearest)
+				int tov = ((t_item *)(toit->content))->index;
+				if (!target || tov < ((t_item *)(target->content))->index)
 				{
-					nearest = v;
-					jmin = j;
+					target = toit;
 				}
-				ait = ait->next;
-				++j;
+				toit = toit->next;
 			}
 		}
-		// ((t_item *)(bit->content))->target = jmin;
-		targets[i] = jmin;
-
-		bit = bit->next;
-		++i;
+		((t_item *)(fit->content))->target = target;
+		fit = fit->next;
 	}
-	return (targets);
 }
 
-void	sort_complex(t_list **a, t_list **b)
+static void	fill_costs(t_list *a)
 {
-	while (ft_lstsize(*a) > 3)
-		pb(a, b);
-	sort_trivial(a);
-
-	int bsize = ft_lstsize(*b);
-	int *targets = get_targets(*a, *b);
-	int mincost = INT_MAX;
-	int mincosti = -1;
+	// t_list	*min = 0;
+	int asize = ft_lstsize(a);
 	int i = 0;
-	while (i < bsize)
+	while (a)
 	{
-		int cost;
-		if (targets[i] > ft_lstsize(*a) / 2)
-			cost = ft_lstsize(*a) - targets[i];
+		if (i < asize / 2)
+			((t_item *)(a->content))->cost = i;
 		else
-			cost = targets[i];
-		if (cost < mincost)
-		{
-			mincost = cost;
-			mincosti = i;
-		}
-		ft_printf("min for %i: %i, cost: %i\n", lst_at(*b, i), lst_at(*a, targets[i]), cost);
+			((t_item *)(a->content))->cost = asize - i;
+		// if (!min || 
+		// 	((t_item *)(a->content))->cost < ((t_item *)(min->content))->cost)
+		// 	min = a;
+		a = a->next;
 		++i;
 	}
-	ft_printf("cheapest: %i to %i\n", lst_at(*b, mincosti), lst_at(*a, targets[mincosti]));
-	int target = targets[mincosti];
-	free(targets);
-	if (target > ft_lstsize(*a) / 2)
+	// return (min);
+}
+
+static int	get_combined_cost(t_item *item)
+{
+	// ft_printf("takes %i %i moves to get top and %i moves to reach target\n", item->index, item->cost,((t_item *)(item->target->content))->cost);
+	return item->cost + 
+		((t_item *)(item->target->content))->cost;
+}
+
+static t_list	*cheapest_target(t_list *b)
+{
+	t_list	*min = 0;
+	// int asize = ft_lstsize(a);
+	int i = 0;
+	while (b)
 	{
-		while (target < ft_lstsize(*a))
+		int cost = get_combined_cost((t_item *)(b->content));
+		if (!min || 
+			cost < get_combined_cost((t_item *)(min->content)))
+			min = b;
+		b = b->next;
+		++i;
+	}
+	return (min);
+}
+
+static void	move_top(t_list **lst, t_list *item, char lst_name)
+{
+	int lsize = ft_lstsize(*lst);
+	int rev_i = ft_lstsize(item);
+	if (rev_i <= lsize / 2)
+	{
+		while (rev_i > 0)
 		{
-			target++;
-			rrs(a, 'a');
+			rrs(lst, lst_name);
+			rev_i--;
 		}
 	}
 	else
 	{
-		while (target > 0)
+		while (rev_i < lsize)
 		{
-			target--;
-			rs(a, 'a');
+			rs(lst, lst_name);
+			rev_i++;
 		}
 	}
-	pa(a, b);
+}
+
+static void	move_bottom(t_list **lst, t_list *item, char lst_name)
+{
+	int lsize = ft_lstsize(*lst);
+	int rev_i = ft_lstsize(item);
+	if (rev_i <= lsize / 2)
+	{
+		while (rev_i > 1)
+		{
+			rrs(lst, lst_name);
+			rev_i--;
+		}
+	}
+	else
+	{
+		while (rev_i <= lsize)
+		{
+			rs(lst, lst_name);
+			rev_i++;
+		}
+	}
+}
+
+void	sort_complex_single(t_list **a, t_list **b)
+{
+	while (ft_lstsize(*a) > 3)
+		pb(a, b);
+	sort_trivial(a, 'a');
+
+	while (ft_lstsize(*b) > 0)
+	{
+		fill_targets(*a, *b);
+		// fill_targets(*b, *a);
+		fill_costs(*b);
+		fill_costs(*a);
+		t_list *cheapest = cheapest_target(*b);
+		// t_list *cheapest = cheapest_target(*a);
+
+		// ft_printf("cheapest target: %i moves for %i\n", get_combined_cost((t_item *)(cheapest->content)), ((t_item *)(cheapest->content))->index);
+		t_list *target = ((t_item *)(cheapest->content))->target;
+		move_top(a, target, 'a');
+		move_top(b, cheapest, 'b');
+		// pb(a, b);
+		pa(a, b);
+
+		// print_stack(*a, *b);
+	}
+
+	int i = 0;
+	t_list *ait = *a;
+	while (ait)
+	{
+		if (((t_item *)(ait->content))->index == 0)
+			break;
+		ait = ait->next;
+		i++;
+	}
+	move_top(a, ait, 'a');
+}
+
+void	sort_complex(t_list **a, t_list **b)
+{
+	while (ft_lstsize(*b) < 3)
+		pb(a, b);
+	sort_trivial(b, 'b');
+	reverse_trivial(b, 'b');
+
+	// print_stack(*a, *b);
+	while (ft_lstsize(*a) > 3)
+	{
+		// fill_targets(*a, *b);
+		fill_targets(*b, *a);
+		fill_costs(*b);
+		fill_costs(*a);
+		// t_list *cheapest = cheapest_target(*b);
+		t_list *cheapest = cheapest_target(*a);
+
+		// ft_printf("cheapest target: %i moves for %i\n", get_combined_cost((t_item *)(cheapest->content)), ((t_item *)(cheapest->content))->index);
+		t_list *target = ((t_item *)(cheapest->content))->target;
+		// move_top(a, cheapest, 'a');
+		// move_top(b, target, 'b');
+		move_top(a, cheapest, 'a');
+		move_bottom(b, target, 'b');
+		pb(a, b);
+		// pa(a, b);
+
+		// print_stack(*a, *b);
+	}
+
+	sort_trivial(a, 'a');
+
+	while (ft_lstsize(*b) > 0)
+	{
+		fill_targets(*a, *b);
+		// fill_targets(*b, *a);
+		fill_costs(*b);
+		fill_costs(*a);
+		t_list *cheapest = cheapest_target(*b);
+		// t_list *cheapest = cheapest_target(*a);
+
+		// ft_printf("cheapest target: %i moves for %i\n", get_combined_cost((t_item *)(cheapest->content)), ((t_item *)(cheapest->content))->index);
+		t_list *target = ((t_item *)(cheapest->content))->target;
+		move_top(a, target, 'a');
+		move_top(b, cheapest, 'b');
+		// pb(a, b);
+		pa(a, b);
+
+		// print_stack(*a, *b);
+	}
+
+	int i = 0;
+	t_list *ait = *a;
+	while (ait)
+	{
+		if (((t_item *)(ait->content))->index == 0)
+			break;
+		ait = ait->next;
+		i++;
+	}
+	move_top(a, ait, 'a');
 }
