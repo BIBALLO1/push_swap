@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:24:28 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/29 11:45:07 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/31 13:49:25 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	lst_fill_indices(t_list *lst)
 	i = 0;
 	while (next_min_idx >= 0)
 	{
-		item = (t_item *)(ft_lstidx(lst, next_min_idx)->content);
+		item = (t_item *)(ft_lstat(lst, next_min_idx)->content);
 		item->index = i++;
 		threshold = item->value;
 		next_min_idx = lst_min(lst, threshold);

@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/17 09:47:01 by dmoraled          #+#    #+#             */
-/*   Updated: 2024/12/17 09:51:06 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/31 13:45:59 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ void	rs(t_list **lst, char stack)
 	*lst = (*lst)->next;
 	first->next = 0;
 	last->next = first;
-	ft_printf("r%c\n", stack);
+	if (stack != 0)
+		ft_printf("r%c\n", stack);
 }
 
 void	rrs(t_list **lst, char stack)
@@ -45,5 +46,20 @@ void	rrs(t_list **lst, char stack)
 	*lst = l->next;
 	l->next = 0;
 	(*lst)->next = first;
-	ft_printf("rr%c\n", stack);
+	if (stack != 0)
+		ft_printf("rr%c\n", stack);
+}
+
+void	rr(t_list **a, t_list **b)
+{
+	rs(a, 0);
+	rs(b, 0);
+	ft_printf("rr\n");
+}
+
+void	rrr(t_list **a, t_list **b)
+{
+	rrs(a, 0);
+	rrs(b, 0);
+	ft_printf("rrr\n");
 }
