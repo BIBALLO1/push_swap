@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 00:45:23 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/31 18:10:19 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/31 21:19:06 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ static int	get_combined_cost(t_item *item)
 static t_list	*cheapest_target(t_list *b)
 {
 	t_list	*min = 0;
-	// int i = 0;
 	while (b)
 	{
 		int cost = get_combined_cost((t_item *)(b->content));
@@ -82,7 +81,6 @@ static t_list	*cheapest_target(t_list *b)
 			cost < get_combined_cost((t_item *)(min->content)))
 			min = b;
 		b = b->next;
-		// ++i;
 	}
 	return (min);
 }
@@ -252,26 +250,15 @@ void	sort_complex(t_list **a, t_list **b)
 	while (ft_lstsize(*a) > 3)
 		pb(a, b);
 	sort_trivial(a, 'a');
-	// reverse_trivial(b, 'b');
 
 	// print_stack(*a, *b);
 	while (*b)
 	{
 		fill_targets(*a, *b);
 		parallel_fill_costs(*a, *b);
-		// ft_printf("got here\n");
-		// fill_costs(*b);
-		// fill_costs(*a);
 		t_list *cheapest = cheapest_target(*b);
 		t_list *target = ((t_item *)(cheapest->content))->target;
-		// ft_printf("selected: %i -> %i (%i|%i)\n",
-		// 	((t_item *)(cheapest->content))->index,
-		// 	((t_item *)(target->content))->index,
-		// 	((t_item *)(cheapest->content))->direction,
-		// 	((t_item *)(target->content))->direction
-		// );
 
-		// t_list *target = ((t_item *)(cheapest->content))->target;
 		parallel_move(a, b, cheapest, target);
 		pa(a, b);
 
@@ -289,61 +276,3 @@ void	sort_complex(t_list **a, t_list **b)
 	}
 	move_top(a, ait, 'a');
 }
-
-// void	sort_complex(t_list **a, t_list **b)
-// {
-// 	while (ft_lstsize(*b) < 3)
-// 		pb(a, b);
-// 	sort_trivial(b, 'b');
-// 	reverse_trivial(b, 'b');
-// 
-// 	// print_stack(*a, *b);
-// 	while (ft_lstsize(*a) > 3)
-// 	{
-// 		fill_targets(*b, *a);
-// 		parallel_fill_costs(*a, *b);
-// 		// fill_costs(*b);
-// 		// fill_costs(*a);
-// 		t_list *cheapest = cheapest_target(*a);
-// 
-// 		// t_list *target = ((t_item *)(cheapest->content))->target;
-// 		parallel_move(a, b, cheapest);
-// 		// move_top(a, cheapest, 'a');
-// 		// move_bottom(b, target, 'b');
-// 		pb(a, b);
-// 
-// 		// print_stack(*a, *b);
-// 	}
-// 
-// 	sort_trivial(a, 'a');
-// 
-// 	while (ft_lstsize(*b) > 0)
-// 	{
-// 		fill_targets(*a, *b);
-// 		// fill_targets(*b, *a);
-// 		fill_costs(*b);
-// 		fill_costs(*a);
-// 		t_list *cheapest = cheapest_target(*b);
-// 		// t_list *cheapest = cheapest_target(*a);
-// 
-// 		// ft_printf("cheapest target: %i moves for %i\n", get_combined_cost((t_item *)(cheapest->content)), ((t_item *)(cheapest->content))->index);
-// 		t_list *target = ((t_item *)(cheapest->content))->target;
-// 		move_top(a, target, 'a');
-// 		move_top(b, cheapest, 'b');
-// 		// pb(a, b);
-// 		pa(a, b);
-// 
-// 		// print_stack(*a, *b);
-// 	}
-// 
-// 	int i = 0;
-// 	t_list *ait = *a;
-// 	while (ait)
-// 	{
-// 		if (((t_item *)(ait->content))->index == 0)
-// 			break;
-// 		ait = ait->next;
-// 		i++;
-// 	}
-// 	move_top(a, ait, 'a');
-// }
