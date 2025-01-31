@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:21:27 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/29 13:58:23 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/01/31 15:59:08 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,16 @@
 # include <limits.h>
 # include "libft/libft.h"
 
+# define DIRECTION_UP 0
+# define DIRECTION_DOWN 1
+
 typedef struct s_item
 {
-	t_list *target;
-	int	value;
-	int	index;
-	int	cost;
+	t_list	*target;
+	int		value;
+	int		index;
+	int		cost;
+	char	direction;
 }	t_item;
 
 void	lst_item_free(void *content);
@@ -40,6 +44,8 @@ void	pb(t_list **a, t_list **b);
 void	pa(t_list **a, t_list **b);
 void	rs(t_list **lst, char stack);
 void	rrs(t_list **lst, char stack);
+void	rrr(t_list **a, t_list **b);
+void	rr(t_list **a, t_list **b);
 void	ss(t_list **lst, char stack);
 
 #endif
