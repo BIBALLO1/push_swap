@@ -6,12 +6,51 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/29 00:45:23 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/01/31 21:19:06 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/02/01 14:40:43 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 #include "libft/libft.h"
+
+static void	fill_targets_down(t_list *to, t_list *from)
+{
+	t_list	*toit;
+
+	while (from)
+	{
+		int fv = ((t_item *)(from->content))->index;
+
+		toit = to;
+		t_list *target = 0;
+		while (toit)
+		{
+			int tov = ((t_item *)(toit->content))->index;
+			if (tov < fv)
+			{
+				if (!target || 
+					((t_item *)(target->content))->index < tov)
+					target = toit;
+			}
+			toit = toit->next;
+		}
+		if (!target)
+		{
+			toit = to;
+			while (toit)
+			{
+				int tov = ((t_item *)(toit->content))->index;
+				if (!target || tov > ((t_item *)(target->content))->index)
+				{
+					target = toit;
+				}
+				toit = toit->next;
+			}
+		}
+		((t_item *)(from->content))->target = target;
+		from = from->next;
+	}
+}
 
 static void	fill_targets(t_list *to, t_list *from)
 {
@@ -51,228 +90,233 @@ static void	fill_targets(t_list *to, t_list *from)
 	}
 }
 
-void	fill_costs(t_list *a)
-{
-	int asize = ft_lstsize(a);
-	int i = 0;
-	while (a)
-	{
-		if (i < asize / 2)
-			((t_item *)(a->content))->cost = i;
-		else
-			((t_item *)(a->content))->cost = asize - i;
-		a = a->next;
-		++i;
-	}
-}
-
-static int	get_combined_cost(t_item *item)
-{
-	return item->cost + ((t_item *)(item->target->content))->cost;
-}
-
 static t_list	*cheapest_target(t_list *b)
 {
-	t_list	*min = 0;
+	t_list	*min;
+	int		cost;
+
+	min = 0;
 	while (b)
 	{
-		int cost = get_combined_cost((t_item *)(b->content));
-		if (!min || 
-			cost < get_combined_cost((t_item *)(min->content)))
+		cost = ((t_item *)(b->content))->cost;
+		if (!min || cost < ((t_item *)(min->content))->cost)
 			min = b;
 		b = b->next;
 	}
 	return (min);
 }
 
-static void	move_top(t_list **lst, t_list *item, char lst_name)
-{
-	int lsize = ft_lstsize(*lst);
-	int rev_i = ft_lstsize(item);
-	if (rev_i <= lsize / 2)
-	{
-		while (rev_i > 0)
-		{
-			rrs(lst, lst_name);
-			rev_i--;
-		}
-	}
-	else
-	{
-		while (rev_i < lsize)
-		{
-			rs(lst, lst_name);
-			rev_i++;
-		}
-	}
-}
+# define MAX(a, b) ((a > b) ? (a) : (b))
+# define MIN(a, b) ((a < b) ? (a) : (b))
 
-void	move_bottom(t_list **lst, t_list *item, char lst_name)
+static int	cheapest_parallel_path(t_list *to, t_list *from, t_list *f, char *fdir, char *tdir)
 {
-	int lsize = ft_lstsize(*lst);
-	int rev_i = ft_lstsize(item);
-	if (rev_i <= lsize / 2)
+	t_list *target = ((t_item *)(f->content))->target;
+	int from_s = ft_lstsize(from);
+	int to_s = ft_lstsize(to);
+	int min = INT_MAX;
+	int fpos = from_s - ft_lstsize(f);
+	int tpos = to_s - ft_lstsize(target);
+	// both up
+	int cost = MIN(fpos, tpos);
+	cost += MAX(fpos, tpos) - cost;
+	min = cost;
+	*tdir = DIRECTION_UP;
+	*fdir = DIRECTION_UP;
+	// up / down
+	cost = fpos + (to_s - tpos);
+	if (cost < min)
 	{
-		while (rev_i > 1)
-		{
-			rrs(lst, lst_name);
-			rev_i--;
-		}
+		min = cost;
+		*tdir = DIRECTION_DOWN;
+		*fdir = DIRECTION_UP;
 	}
-	else
+	// down / up
+	cost = (from_s - fpos) + to_s;
+	if (cost < min)
 	{
-		while (rev_i <= lsize)
-		{
-			rs(lst, lst_name);
-			rev_i++;
-		}
+		min = cost;
+		*tdir = DIRECTION_UP;
+		*fdir = DIRECTION_DOWN;
 	}
+	// both down
+	cost = MIN(from_s - fpos, to_s - tpos);
+	cost += MAX(from_s - fpos, to_s - tpos) - cost;
+	if (cost < min)
+	{
+		min = cost;
+		*tdir = DIRECTION_DOWN;
+		*fdir = DIRECTION_DOWN;
+	}
+	return (min);
 }
 
 static void	parallel_fill_costs(t_list *to, t_list *from)
 {
-	int from_s = ft_lstsize(from);
-	int to_s = ft_lstsize(to);
-	int i = 0;
-	while (from)
+	t_list	*f;
+	int		cost;
+
+	f = from;
+	while (f)
 	{
-		t_list	*target = ((t_item *)(from->content))->target;
-		int target_rev_i = ft_lstsize(target);
-		// int	base_cost;
-		if ((i < from_s / 2) == (target_rev_i >= to_s / 2)) // same direction
-		{
-			if (i < from_s / 2)
-			{
-				((t_item *)(from->content))->cost = i;
-				((t_item *)(from->content))->direction = DIRECTION_UP;
-				((t_item *)(target->content))->cost = to_s - target_rev_i;
-				((t_item *)(target->content))->direction = DIRECTION_UP;
-			}
-			else 
-			{
-				((t_item *)(from->content))->cost = from_s - i;
-				((t_item *)(from->content))->direction = DIRECTION_DOWN;
-				((t_item *)(target->content))->cost = target_rev_i;
-				((t_item *)(target->content))->direction = DIRECTION_DOWN;
-			}
-		}
-		else
-		{
-			if (i < from_s / 2)
-			{
-				((t_item *)(from->content))->cost = i;
-				((t_item *)(from->content))->direction = DIRECTION_UP;
-				((t_item *)(target->content))->cost = target_rev_i;
-				((t_item *)(target->content))->direction = DIRECTION_DOWN;
-			}
-			else 
-			{
-				((t_item *)(from->content))->cost = from_s - i;
-				((t_item *)(from->content))->direction = DIRECTION_DOWN;
-				((t_item *)(target->content))->cost = to_s - target_rev_i;
-				((t_item *)(target->content))->direction = DIRECTION_UP;
-			}
-		}
-
-		// ft_printf("assigned from %i (cost %i, dir %i) to %i (cost %i, dir %i)\n",
-		// 	((t_item *)(from->content))->index,
-		// 	((t_item *)(from->content))->cost,
-		// 	((t_item *)(from->content))->direction,
-		// 	((t_item *)(target->content))->index,
-		// 	((t_item *)(target->content))->cost,
-		// 	((t_item *)(target->content))->direction
-		// );
-
-		from = from->next;
-		++i;
+		cost = cheapest_parallel_path(to, from, f,
+				&(((t_item *)(f->content))->direction),
+				&(((t_item *)(f->content))->target_dir));
+		((t_item *)(f->content))->cost = cost;
+		f = f->next;
 	}
 }
 
-void	parallel_move(t_list **to, t_list **from, t_list *cheapest, t_list *target) 
+void	parallel_move(t_list **to, t_list **from, t_list *f, t_list *target, char tname, char fname)
 {
-	int	from_s = ft_lstsize(*from);
-	int	to_s = ft_lstsize(*to);
-	char cheap_dir = ((t_item *)(cheapest->content))->direction;
-	char target_dir = ((t_item *)(target->content))->direction;
-	int cheap_r = ft_lstsize(cheapest);
-	int target_r = ft_lstsize(target);
-	// ft_printf("dirs: %i %i \n", cheap_dir, target_dir);
-	if (cheap_dir != target_dir)
+	char tdir = ((t_item *)(f->content))->target_dir;
+	char fdir = ((t_item *)(f->content))->direction;
+	int from_s = ft_lstsize(*from);
+	int to_s = ft_lstsize(*to);
+	int fpos = from_s - ft_lstsize(f);
+	int tpos = to_s - ft_lstsize(target);
+	if (tdir == fdir)
 	{
-		// ft_printf("going different ways, cant do nothing\n");
-		move_top(to, target, 'a');
-		move_top(from, cheapest, 'b');
-		// move_bottom(from, target, 'b');
-	} else {
-		if (cheap_dir == DIRECTION_DOWN)
+		if (fdir == DIRECTION_UP)
 		{
-			while (target_r > 0 && cheap_r > 0)
+			while (fpos > 0 && tpos > 0)
 			{
-				rrr(to, from);
-				--target_r;
-				--cheap_r;
+				rr(from, to);
+				--fpos;
+				--tpos;
 			}
-			while (target_r > 0)
+			while (fpos > 0)
 			{
-				rrs(to, 'a');
-				--target_r;
+				rs(from, fname);
+				--fpos;
 			}
-			while (cheap_r > 0)
+			while (tpos > 0)
 			{
-				rrs(from, 'b');
-				--cheap_r;
+				rs(to, tname);
+				--tpos;
 			}
 		}
 		else
 		{
-			while (target_r < to_s && cheap_r < from_s)
+			while (fpos < from_s && tpos < to_s)
 			{
-				rr(to, from);
-				++target_r;
-				++cheap_r;
+				rrr(from, to);
+				++fpos;
+				++tpos;
 			}
-			while (target_r < to_s)
+			while (fpos < from_s)
 			{
-				rs(to, 'a');
-				++target_r;
+				rrs(from, fname);
+				++fpos;
 			}
-			while (cheap_r < from_s)
+			while (tpos < to_s)
 			{
-				rs(from, 'b');
-				++cheap_r;
+				rrs(to, tname);
+				++tpos;
 			}
 		}
+	}
+	else
+	{
+		if (fdir == DIRECTION_UP)
+		{
+			while (fpos > 0)
+			{
+				rs(from, fname);
+				--fpos;
+			}
+			while (tpos < to_s)
+			{
+				rrs(to, tname);
+				++tpos;
+			}
+		}
+		else
+		{
+			while (fpos < from_s)
+			{
+				rrs(from, fname);
+				++fpos;
+			}
+			while (tpos > 0)
+			{
+				rs(to, tname);
+				--tpos;
+			}
+		}
+	}
+}
+
+static void	scroll_up(t_list **l, char name)
+{
+	t_list	*ait;
+	int		i;
+
+	ait = *l;
+	i = 0;
+	while (ait)
+	{
+		if (((t_item *)(ait->content))->index == 0)
+			break ;
+		ait = ait->next;
+		++i;
+	}
+	if (i < ft_lstsize(*l) / 2)
+	{
+		while ((--i) >= 0)
+			rs(l, name);
+	}
+	else
+	{
+		while ((++i) <= ft_lstsize(*l))
+			rrs(l, name);
 	}
 }
 
 void	sort_complex(t_list **a, t_list **b)
 {
-	while (ft_lstsize(*a) > 3)
-		pb(a, b);
-	sort_trivial(a, 'a');
+	t_list	*cheapest;
 
-	// print_stack(*a, *b);
+	pb(a, b);
+	while (ft_lstsize(*a) > ft_lstsize(*b))
+	{
+		fill_targets_down(*b, *a);
+		parallel_fill_costs(*b, *a);
+		cheapest = cheapest_target(*a);
+		t_list *target = ((t_item *)(cheapest->content))->target;
+
+		parallel_move(b, a, cheapest, target, 'b', 'a');
+		pb(a, b);
+	}
+	while (ft_lstsize(*a) > 1)
+		pb(a, b);
 	while (*b)
 	{
 		fill_targets(*a, *b);
 		parallel_fill_costs(*a, *b);
-		t_list *cheapest = cheapest_target(*b);
+		cheapest = cheapest_target(*b);
 		t_list *target = ((t_item *)(cheapest->content))->target;
-
-		parallel_move(a, b, cheapest, target);
+		parallel_move(a, b, cheapest, target, 'a', 'b');
 		pa(a, b);
-
-		// print_stack(*a, *b);
 	}
+	scroll_up(a, 'a');
+}
 
-	int i = 0;
-	t_list *ait = *a;
-	while (ait)
+void	sort_small(t_list **a, t_list **b)
+{
+	t_list	*cheapest;
+
+	while (ft_lstsize(*a) > 3)
+		pb(a, b);
+	sort_trivial(a, 'a');
+	while (*b)
 	{
-		if (((t_item *)(ait->content))->index == 0)
-			break;
-		ait = ait->next;
-		i++;
+		fill_targets(*a, *b);
+		parallel_fill_costs(*a, *b);
+		cheapest = cheapest_target(*b);
+		t_list *target = ((t_item *)(cheapest->content))->target;
+		parallel_move(a, b, cheapest, target, 'a', 'b');
+		pa(a, b);
 	}
-	move_top(a, ait, 'a');
+	scroll_up(a, 'a');
 }
