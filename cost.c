@@ -6,20 +6,21 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 16:08:38 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/02/02 18:25:12 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/02/02 21:23:31 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft/libft.h"
 #include "push_swap.h"
 
-static void	test_cost_uu(t_list *to, t_list *from, t_list *f, int *min)
+static void	test_cost_uu(int tsize, int fsize, t_list *f, int *min)
 {
 	int	cost;
 	int	tpos;
 	int	fpos;
 
-	fpos = ft_lstsize(from) - ft_lstsize(f);
-	tpos = ft_lstsize(to) - ft_lstsize(((t_item *)(f->content))->target);
+	fpos = fsize - ft_lstsize(f);
+	tpos = tsize - ft_lstsize(((t_item *)(f->content))->target);
 	cost = ft_min(fpos, tpos);
 	cost += ft_max(fpos, tpos) - cost;
 	if (cost < *min)
@@ -30,13 +31,13 @@ static void	test_cost_uu(t_list *to, t_list *from, t_list *f, int *min)
 	}
 }
 
-static void	test_cost_ud(t_list *to, t_list *from, t_list *f, int *min)
+static void	test_cost_ud(int tsize, int fsize, t_list *f, int *min)
 {
 	int	cost;
 	int	fpos;
 
-	(void)to;
-	fpos = ft_lstsize(from) - ft_lstsize(f);
+	(void)tsize;
+	fpos = fsize - ft_lstsize(f);
 	cost = fpos + ft_lstsize(((t_item *)(f->content))->target);
 	if (cost < *min)
 	{
@@ -46,13 +47,13 @@ static void	test_cost_ud(t_list *to, t_list *from, t_list *f, int *min)
 	}
 }
 
-static void	test_cost_du(t_list *to, t_list *from, t_list *f, int *min)
+static void	test_cost_du(int tsize, int fsize, t_list *f, int *min)
 {
 	int	cost;
 
-	(void)from;
+	(void)fsize;
 	cost = ft_lstsize(f)
-		+ (ft_lstsize(to) - ft_lstsize(((t_item *)(f->content))->target));
+		+ (tsize - ft_lstsize(((t_item *)(f->content))->target));
 	if (cost < *min)
 	{
 		*min = cost;
@@ -61,16 +62,18 @@ static void	test_cost_du(t_list *to, t_list *from, t_list *f, int *min)
 	}
 }
 
-static void	test_cost_dd(t_list *to, t_list *from, t_list *f, int *min)
+static void	test_cost_dd(int tsize, int fsize, t_list *f, int *min)
 {
 	int		cost;
-	t_list	*target;
+	int		fs;
+	int		ts;
 
-	(void)to;
-	(void)from;
-	target = ((t_item *)(f->content))->target;
-	cost = ft_min(ft_lstsize(f), ft_lstsize(target));
-	cost += ft_max(ft_lstsize(f), ft_lstsize(target)) - cost;
+	(void)tsize;
+	(void)fsize;
+	fs = ft_lstsize(f);
+	ts = ft_lstsize(((t_item *)(f->content))->target);
+	cost = ft_min(fs, ts);
+	cost += ft_max(fs, ts) - cost;
 	if (cost < *min)
 	{
 		*min = cost;
@@ -83,15 +86,19 @@ void	fill_costs(t_list *to, t_list *from)
 {
 	t_list	*f;
 	int		min;
+	int		tsize;
+	int		fsize;
 
 	f = from;
 	while (f)
 	{
 		min = INT_MAX;
-		test_cost_uu(to, from, f, &min);
-		test_cost_ud(to, from, f, &min);
-		test_cost_du(to, from, f, &min);
-		test_cost_dd(to, from, f, &min);
+		tsize = ft_lstsize(to);
+		fsize = ft_lstsize(from);
+		test_cost_uu(tsize, fsize, f, &min);
+		test_cost_ud(tsize, fsize, f, &min);
+		test_cost_du(tsize, fsize, f, &min);
+		test_cost_dd(tsize, fsize, f, &min);
 		((t_item *)(f->content))->cost = min;
 		f = f->next;
 	}
