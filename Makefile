@@ -2,6 +2,10 @@ SRC = push_swap.c\
 	  parse_input.c\
 	  trivial.c\
 	  complex.c\
+	  move.c\
+	  target.c\
+	  cost.c\
+	  util.c\
 	  instructions/push.c\
 	  instructions/swap.c\
 	  instructions/rotate.c
@@ -13,7 +17,7 @@ LIBDIR = libft
 LIBNAME = ft
 LIB = $(LIBDIR)/lib$(LIBNAME).a
 
-CFLAGS = -Wall -Wextra -Werror -DDEB # -fsanitize=address -g3
+CFLAGS = -Wall -Wextra -Werror # -fsanitize=address -g3
 
 all: $(NAME)
 

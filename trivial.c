@@ -6,12 +6,11 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/28 16:09:18 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/02/01 13:27:59 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/02/02 18:17:39 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
-#include "libft/libft.h"
 
 static int	lst_at(t_list *a, int idx)
 {
