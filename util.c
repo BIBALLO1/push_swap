@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/02 18:16:36 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/02/02 18:22:08 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/02/10 16:31:23 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,19 @@ int	lst_min_value(t_list *lst, int threshold)
 		++curr_idx;
 	}
 	return (min_idx);
+}
+
+int	is_sorted(t_list *lst)
+{
+	int	i;
+
+	i = 0;
+	while (lst)
+	{
+		if (((t_item *)(lst->content))->index != i)
+			return (0);
+		lst = lst->next;
+		++i;
+	}
+	return (1);
 }

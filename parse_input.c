@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:24:28 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/02/02 18:22:26 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/02/10 17:33:12 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	lst_fill_indices(t_list *lst)
 	int		i;
 
 	if (!lst)
-		return (0);
+		return (-1);
 	threshold = INT_MIN;
 	next_min_idx = lst_min_value(lst, threshold);
 	i = 0;
@@ -47,9 +47,14 @@ int	add_arg(t_list **lst, const char *arg, const char **endptr)
 	long	value;
 
 	item = ft_calloc(1, sizeof(t_item));
-	new = ft_lstnew(item);
-	if (!item || !new)
+	if (!item)
 		return (0);
+	new = ft_lstnew(item);
+	if (!new)
+	{
+		free(item);
+		return (0);
+	}
 	ft_strtol(arg, endptr);
 	value = ft_atol(arg);
 	if (!ft_isint(value))

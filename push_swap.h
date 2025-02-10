@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:21:27 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/02/02 18:22:20 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/02/10 16:32:09 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void	sort_complex(t_list **a, t_list **b);
 
 int		lst_item_less(void *a, void *b);
 int		lst_item_more(void *a, void *b);
+int		is_sorted(t_list *lst);
 
 void	pb(t_list **a, t_list **b);
 void	pa(t_list **a, t_list **b);

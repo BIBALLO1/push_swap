@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/03 10:35:38 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/02/02 18:17:52 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/02/10 16:32:19 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,8 @@ int	main(int argc, char **argv)
 	a = parse_input(argc, argv);
 	if (!a)
 		return (1);
+	if (is_sorted(a))
+		return (0);
 	b = 0;
 	if (ft_lstsize(a) <= 5)
 		sort_small(&a, &b);
