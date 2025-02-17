@@ -6,7 +6,7 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:21:27 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/02/10 16:32:09 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/02/17 12:59:04 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef struct s_item
 }	t_item;
 
 void	lst_item_free(void *content);
-int		lst_min_value(t_list *lst, int threshold);
+t_list	*lst_min_value(t_list *lst, int threshold);
 t_list	*parse_input(int argc, char **argv);
 
 void	print_stack(t_list *a, t_list *b);

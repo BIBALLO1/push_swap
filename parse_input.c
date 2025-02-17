@@ -6,10 +6,11 @@
 /*   By: dmoraled <dmoraled@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:24:28 by dmoraled          #+#    #+#             */
-/*   Updated: 2025/02/10 17:33:12 by dmoraled         ###   ########.fr       */
+/*   Updated: 2025/02/17 13:16:26 by dmoraled         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft/libft.h"
 #include "push_swap.h"
 
 void	lst_item_free(void *content)
@@ -21,30 +22,29 @@ void	lst_item_free(void *content)
 int	lst_fill_indices(t_list *lst)
 {
 	t_item	*item;
-	int		next_min_idx;
+	t_list	*next_min;
 	int		threshold;
 	int		i;
 
 	if (!lst)
 		return (-1);
 	threshold = INT_MIN;
-	next_min_idx = lst_min_value(lst, threshold);
+	next_min = lst_min_value(lst, threshold);
 	i = 0;
-	while (next_min_idx >= 0)
+	while (next_min != 0 && ((t_item *)(next_min->content))->index >= 0)
 	{
-		item = (t_item *)(ft_lstat(lst, next_min_idx)->content);
+		item = (t_item *)(next_min->content);
 		item->index = i++;
 		threshold = item->value;
-		next_min_idx = lst_min_value(lst, threshold);
+		next_min = lst_min_value(lst, threshold);
 	}
-	return (next_min_idx != -2);
+	return (!next_min);
 }
 
 int	add_arg(t_list **lst, const char *arg, const char **endptr)
 {
 	t_item	*item;
 	t_list	*new;
-	long	value;
 
 	item = ft_calloc(1, sizeof(t_item));
 	if (!item)
@@ -55,11 +55,9 @@ int	add_arg(t_list **lst, const char *arg, const char **endptr)
 		free(item);
 		return (0);
 	}
-	ft_strtol(arg, endptr);
-	value = ft_atol(arg);
-	if (!ft_isint(value))
+	if (!ft_isint(arg))
 		return (0);
-	item->value = value;
+	item->value = ft_strtol(arg, endptr);
 	ft_lstadd_back(lst, new);
 	return (1);
 }
